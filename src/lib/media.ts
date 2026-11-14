@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { downloadImage, removeAllImagesOnline, removeImageOnline, uploadImage } from './cloud'
 import { uid } from './defaults'
 
 /*
@@ -33,22 +34,33 @@ function tx<T>(mode: IDBTransactionMode, run: (s: IDBObjectStore) => IDBRequest<
   )
 }
 
-export const getImage = (id: string) => tx<Blob | undefined>('readonly', (s) => s.get(id))
+/** Local copy first; in online mode a missing picture is downloaded once and cached. */
+export async function getImage(id: string, opts: { localOnly?: boolean } = {}): Promise<Blob | undefined> {
+  const local = await tx<Blob | undefined>('readonly', (s) => s.get(id))
+  if (local || opts.localOnly) return local
+  const remote = await downloadImage(id)
+  if (!remote) return undefined
+  await tx('readwrite', (s) => s.put(remote, id))
+  return remote
+}
 export const deleteImage = (id: string) => {
   const url = urlCache.get(id)
   if (url) URL.revokeObjectURL(url)
   urlCache.delete(id)
+  removeImageOnline(id)
   return tx<undefined>('readwrite', (s) => s.delete(id))
 }
 export const allImageIds = () => tx<IDBValidKey[]>('readonly', (s) => s.getAllKeys()).then((k) => k.map(String))
-export const clearImages = () => {
+export const clearImages = async () => {
   urlCache.forEach((u) => URL.revokeObjectURL(u))
   urlCache.clear()
+  await removeAllImagesOnline()
   return tx<undefined>('readwrite', (s) => s.clear())
 }
 
 export async function putImage(blob: Blob, id = uid('img')): Promise<string> {
   await tx('readwrite', (s) => s.put(blob, id))
+  await uploadImage(id, blob)
   return id
 }
 

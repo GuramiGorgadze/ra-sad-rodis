@@ -12,8 +12,10 @@ import {
   Users,
   Volume2,
   Layers,
+  LogOut,
   Sparkles,
 } from 'lucide-react'
+import { logout, useCloud } from '../lib/cloud'
 import { useRef, useState, type ReactNode } from 'react'
 import { AppHeader, Button, Card, Field, Input, SectionTitle, Segmented, Textarea } from '../components/ui'
 import { KIND_DEFAULTS, KIND_LABEL, makeBlock, makeQuestion, uid } from '../lib/defaults'
@@ -36,7 +38,7 @@ export default function EditorPage() {
 
   return (
     <div className="flex h-full flex-col bg-ink-900">
-      <AppHeader route="/editor" right={<span className="hidden items-center gap-1.5 text-[12.5px] text-stone-400 lg:flex"><Check className="size-3.5 text-sage-400" aria-hidden /> ცვლილებები ავტომატურად ინახება</span>} />
+      <AppHeader route="/editor" />
       <div className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[250px_minmax(0,1fr)]">
         <aside className="scroll-thin flex min-h-0 flex-col gap-1 overflow-y-auto border-r border-ink-700/70 p-3" aria-label="რედაქტორის განყოფილებები">
           <button className={navItem(sec.kind === 'general')} onClick={() => setSec({ kind: 'general' })}>
@@ -146,11 +148,12 @@ function GeneralSection() {
             შედეგები სათითაოდ — ბოლო ადგილიდან პირველისკენ
           </label>
         </Card>
+        <OnlineCard />
         <Card className="p-5 xl:col-span-2">
           <SectionTitle>ფაილები</SectionTitle>
           <p className="mb-4 max-w-3xl text-[13.5px] leading-relaxed text-stone-400">
-            ყველაფერი ინახება ამ კომპიუტერის ბრაუზერში. სხვა კომპიუტერზე გადასატანად ან უსაფრთხოებისთვის ჩამოტვირთეთ სარეზერვო ასლი
-            (ერთი .json ფაილი სურათებიანად) და იქ ატვირთეთ.
+            სარეზერვო ასლი — ერთი .json ფაილი სურათებიანად. ჩამოტვირთეთ თამაშის წინ, ყოველი შემთხვევისთვის; ატვირთვა ჩაანაცვლებს
+            მიმდინარე თამაშს (ონლაინ რეჟიმში — სერვერზეც).
           </p>
           <div className="flex flex-wrap gap-2">
             <Button variant="primary" onClick={() => void exportBackup()}>
@@ -214,6 +217,40 @@ function GeneralSection() {
         </Card>
       </div>
     </>
+  )
+}
+
+function OnlineCard() {
+  const { mode } = useCloud()
+  return (
+    <Card className="p-5 xl:col-span-2">
+      <SectionTitle>ონლაინ შენახვა</SectionTitle>
+      {mode === 'cloud' ? (
+        <div className="flex flex-wrap items-center gap-4">
+          <p className="flex-1 text-[13.5px] leading-relaxed text-stone-300">
+            გუნდები, კითხვები, სურათები და ქულები ავტომატურად ინახება სერვერზე. ნებისმიერ კომპიუტერზე გახსენით ეს მისამართი, შეიყვანეთ პაროლი —
+            და ყველაფერი ჩაიტვირთება. სურათები ამ კომპიუტერშიც ინახება, ასე რომ თამაშის დროს ინტერნეტის გაწყვეტა არ შეგიშლით.
+          </p>
+          <SaveStatusInline />
+          <Button variant="ghost" onClick={logout}>
+            <LogOut className="size-4" aria-hidden /> გასვლა
+          </Button>
+        </div>
+      ) : (
+        <p className="text-[13.5px] leading-relaxed text-stone-400">
+          ახლა ყველაფერი ინახება მხოლოდ ამ ბრაუზერში. ონლაინ შესანახად ჩართეთ სერვერი (Render + MongoDB — იხილეთ README).
+        </p>
+      )}
+    </Card>
+  )
+}
+
+function SaveStatusInline() {
+  const status = useCloud((c) => c.status)
+  return (
+    <span className={`text-[13px] font-semibold ${status === 'error' ? 'text-ember-300' : status === 'saving' ? 'text-brass-300' : 'text-sage-400'}`}>
+      {status === 'error' ? 'ვერ შეინახა' : status === 'saving' ? 'ინახება…' : 'შენახულია'}
+    </span>
   )
 }
 

@@ -63,6 +63,18 @@ useStore.subscribe((s, p) => {
   if (s.show !== p.show) persist('show', s.show)
 })
 
+/* Updates that came from another window or from the server must not be saved back again. */
+let remote = false
+export const isRemoteUpdate = () => remote
+export function applyRemote(patch: Partial<State>) {
+  remote = true
+  try {
+    useStore.setState(patch)
+  } finally {
+    remote = false
+  }
+}
+
 window.addEventListener('storage', (e) => {
   if (e.key === null) {
     // localStorage.clear() in another window
@@ -73,7 +85,7 @@ window.addEventListener('storage', (e) => {
   if (!slice || e.newValue == null) return
   lastWritten[e.key] = e.newValue
   try {
-    useStore.setState({ [slice]: JSON.parse(e.newValue) } as Partial<State>)
+    applyRemote({ [slice]: JSON.parse(e.newValue) } as Partial<State>)
   } catch {
     /* ignore */
   }

@@ -20,6 +20,27 @@ npm run build          # ჩვეულებრივი build → dist/
 npm run build:single   # ერთი HTML ფაილი → dist-single/index.html
 ```
 
+## ონლაინ შენახვა (MERN: MongoDB + Express + React + Node)
+
+როცა აპლიკაცია სერვერიდან იხსნება (`npm start` ან Render), გუნდები, კითხვები, პასუხები, სურათები და ქულები
+ავტომატურად ინახება MongoDB-ში. ნებისმიერ კომპიუტერზე: გახსენით მისამართი → პაროლი → ყველაფერი ჩაიტვირთება.
+სათაურში ჩანს «შენახულია ონლაინ». ეკრანის მიმდინარე მდგომარეობა (რომელი კითხვაა, ტაიმერი) რჩება ამ კომპიუტერზე.
+
+```bash
+npm install
+npm run build
+ADMIN_PASSWORD=ჩემი-პაროლი MONGODB_URI="mongodb+srv://..." npm start   # http://localhost:3001
+```
+
+| ცვლადი | რისთვის |
+|---|---|
+| `ADMIN_PASSWORD` | პაროლი შესასვლელად (აუცილებელია საჯარო სერვერზე) |
+| `MONGODB_URI` | MongoDB Atlas-ის მისამართი. თუ არ არის — მონაცემები ინახება `data/` საქაღალდეში |
+| `MONGODB_DB` | ბაზის სახელი (ნაგულისხმევი: `ra-sad-rodis`) |
+
+დეველოპმენტი: `npm run dev` უშვებს Vite-ს (5173) და API-ს (3001) ერთად.
+Render-ზე: **Web Service**, Build `npm install && npm run build`, Start `npm start`, + ზემოთ მოცემული ცვლადები.
+
 ## როგორ ჩავატაროთ თამაში
 
 1. **რედაქტორი** (`#/editor`) — ჩაწერეთ გუნდების სახელები, თითო ეტაპისთვის მონიშნეთ მონაწილე გუნდები,
@@ -58,7 +79,7 @@ npm run build:single   # ერთი HTML ფაილი → dist-single/index
 
 - ყველა ფანჯარა (პროექტორი, პულტი, რედაქტორი) **ერთ კომპიუტერზე, ერთსა და იმავე ბრაუზერში** უნდა იყოს გახსნილი —
   ისინი ერთმანეთს ბრაუზერის მეხსიერებით უკავშირდებიან.
-- მონაცემები ინახება ამ ბრაუზერში. სხვა კომპიუტერზე გადასატანად: რედაქტორი → «ზოგადი და ფაილები» →
+- ფაილიდან (`ra-sad-rodis.html`) გახსნისას მონაცემები ინახება მხოლოდ ამ ბრაუზერში. სხვა კომპიუტერზე გადასატანად: რედაქტორი → «ზოგადი და ფაილები» →
   «სარეზერვო ასლის ჩამოტვირთვა», შემდეგ იქ «ასლის ატვირთვა». **თამაშის წინ აუცილებლად გააკეთეთ ასლი.**
 - ხმა: ტაიმერის სიგნალები ისმის პულტის ფანჯრიდან (თუ ის ღიაა), წინააღმდეგ შემთხვევაში — პროექტორის ფანჯრიდან.
   ბრაუზერი ხმას რთავს მხოლოდ მას შემდეგ, რაც ფანჯარაზე ერთხელ დააწკაპუნებთ.
@@ -75,6 +96,9 @@ A projector app for the Georgian school edition of *What? Where? When?*.
 - `#/scores` — full score grid with +/- adjustments; not projected.
 - `#/editor` — teams, stages, rounds (regular / blitz / super blitz), questions with image upload, backup import/export, demo data.
 
+Online mode (MERN): `server/index.js` (Express 5) stores the game, scores and pictures in MongoDB (`MONGODB_URI`)
+or in `./data` without it, protected by `ADMIN_PASSWORD`; the client autosaves, polls for changes from other
+computers every 15 s and caches all pictures locally so the show keeps working offline.
 State syncs between windows of the same browser through `localStorage` + `storage` events; pictures are
 stored in IndexedDB and downsized to ≤2400 px. Sounds are synthesised with Web Audio. Fonts (Noto Serif Georgian,
 FiraGO, Playfair Display) are bundled, so it runs fully offline. Stack: Vite, React 19, TypeScript, Tailwind CSS 4,

@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 import { Kbd } from './components/bits'
 import { Mark, TableMotif } from './components/Ring'
 import { openScreenWindow } from './components/ui'
+import { LoginScreen, Splash } from './components/cloudui'
+import { useCloud } from './lib/cloud'
 import ControlPage from './control/ControlPage'
 import ScoresPage from './control/ScoresPage'
 import EditorPage from './editor/EditorPage'
@@ -25,7 +27,12 @@ export default function App() {
     document.title =
       path === '/screen' ? 'ეკრანი · რა? სად? როდის?' : path === '/control' ? 'პულტი · რა? სად? როდის?' : 'რა? სად? როდის?'
   }, [path])
-  if (path === '/screen') return <ScreenPage preview={params.has('preview')} />
+  const mode = useCloud((c) => c.mode)
+  const needLogin = useCloud((c) => c.needLogin)
+  if (path === '/screen' && params.has('preview')) return <ScreenPage preview />
+  if (mode === 'checking') return <Splash />
+  if (needLogin) return <LoginScreen role={path === '/screen' ? 'screen' : 'app'} />
+  if (path === '/screen') return <ScreenPage />
   if (path === '/control') return <ControlPage />
   if (path === '/scores') return <ScoresPage />
   if (path === '/editor') return <EditorPage />

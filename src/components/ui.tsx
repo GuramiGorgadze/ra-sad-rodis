@@ -4,6 +4,7 @@ import { mt } from '../lib/defaults'
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from 'react'
 import { useStore } from '../lib/store'
 import { Mark } from './Ring'
+import { SaveStatus } from './cloudui'
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success'
 type Size = 'sm' | 'md' | 'lg' | 'xl'
@@ -143,7 +144,8 @@ export function AppHeader({ route, right }: { route: string; right?: ReactNode }
             )
           })}
         </nav>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-3">
+          <SaveStatus />
           {right}
           <Button variant="primary" onClick={openScreenWindow}>
             <MonitorPlay className="size-4" aria-hidden /> <span className="hidden md:inline">პროექტორის ეკრანი</span>

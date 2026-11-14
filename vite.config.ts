@@ -13,5 +13,5 @@ export default defineConfig(({ mode }) => ({
     assetsInlineLimit: mode === 'single' ? 100_000_000 : 4096,
     chunkSizeWarningLimit: 4000,
   },
-  server: { port: 5173, open: '/#/' },
+  server: { port: 5173, open: '/#/', proxy: { '/api': 'http://localhost:3001' } },
 }))
