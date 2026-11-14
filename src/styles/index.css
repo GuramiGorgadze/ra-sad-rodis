@@ -1,0 +1,209 @@
+@import '@fontsource-variable/noto-serif-georgian/wght.css';
+@import '@fontsource-variable/playfair-display/wght.css';
+@import 'tailwindcss';
+
+/* FiraGO (OFL) — woff2 only, bundled locally so the game works without internet */
+@font-face {
+  font-family: 'FiraGO';
+  font-weight: 400;
+  font-display: swap;
+  src: url('../../node_modules/@fontsource/firago/files/firago-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'FiraGO';
+  font-weight: 500;
+  font-display: swap;
+  src: url('../../node_modules/@fontsource/firago/files/firago-latin-500-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'FiraGO';
+  font-weight: 600;
+  font-display: swap;
+  src: url('../../node_modules/@fontsource/firago/files/firago-latin-600-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'FiraGO';
+  font-weight: 700;
+  font-display: swap;
+  src: url('../../node_modules/@fontsource/firago/files/firago-latin-700-normal.woff2') format('woff2');
+}
+
+/* ───────────────── Layer 1 · primitives ───────────────── */
+@theme {
+  --color-ink-950: #070605;
+  --color-ink-900: #0d0b09;
+  --color-ink-850: #13110e;
+  --color-ink-800: #1a1713;
+  --color-ink-750: #211d18;
+  --color-ink-700: #2b261f;
+  --color-ink-600: #3b342b;
+  --color-ink-500: #5a5145;
+  --color-stone-400: #8f8576;
+  --color-stone-300: #b9b0a2;
+  --color-parchment-100: #f3ece0;
+  --color-parchment-50: #fbf7f0;
+  --color-brass-200: #fbe7b4;
+  --color-brass-300: #f0d48f;
+  --color-brass-400: #e3b65c;
+  --color-brass-500: #c9963a;
+  --color-brass-600: #9c6f22;
+  --color-brass-800: #4a3410;
+  --color-brass-900: #2a1e0b;
+  --color-ember-300: #ff9a80;
+  --color-ember-400: #ff6b4a;
+  --color-ember-600: #b8361c;
+  --color-sage-300: #97e6bd;
+  --color-sage-400: #5fd39a;
+  --color-sage-700: #1d5a3c;
+  --color-silver-300: #d3d9e1;
+  --color-bronze-400: #d08a5a;
+
+  --font-display: 'Noto Serif Georgian Variable', 'Noto Serif Georgian', 'Sylfaen', serif;
+  --font-sans: 'FiraGO', 'Noto Sans Georgian', 'Segoe UI', system-ui, sans-serif;
+  --font-num: 'Playfair Display Variable', 'Playfair Display', 'Georgia', serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ───────────────── Layer 2 · semantic ───────────────── */
+:root {
+  --bg-stage: var(--color-ink-950);
+  --bg-app: var(--color-ink-900);
+  --bg-surface: var(--color-ink-850);
+  --bg-raised: var(--color-ink-800);
+  --border-subtle: var(--color-ink-700);
+  --border-strong: var(--color-ink-600);
+  --text-primary: var(--color-parchment-100);
+  --text-muted: var(--color-stone-400);
+  --text-soft: var(--color-stone-300);
+  --accent: var(--color-brass-400);
+  --accent-strong: var(--color-brass-300);
+  --danger: var(--color-ember-400);
+  --success: var(--color-sage-400);
+
+  /* Layer 3 · component */
+  --gradient-brass: linear-gradient(180deg, #fff4d6 0%, #f3d995 30%, #e3b65c 58%, #b07d2a 82%, #7a5414 100%);
+  --gradient-ember: linear-gradient(180deg, #ffd9cc 0%, #ff8a6b 45%, #e5482a 100%);
+  --ring-track: rgb(227 182 92 / 0.14);
+  --screen-spot: radial-gradient(ellipse 70% 60% at 50% -8%, rgb(240 212 143 / 0.16), transparent 70%);
+  --screen-vignette: radial-gradient(ellipse 120% 100% at 50% 50%, transparent 55%, rgb(0 0 0 / 0.65) 100%);
+
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-app);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgb(227 182 92 / 0.35);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ───────────────── utilities ───────────────── */
+@utility text-brass {
+  background: var(--gradient-brass);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility text-ember {
+  background: var(--gradient-ember);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility caps {
+  font-family: var(--font-display);
+  letter-spacing: 0.22em;
+  font-weight: 600;
+}
+
+@utility num {
+  font-family: var(--font-num);
+  font-variant-numeric: lining-nums tabular-nums;
+  font-weight: 600;
+}
+
+/* giant display numerals (question number) */
+.num.num-display {
+  font-variant-numeric: lining-nums proportional-nums;
+  font-weight: 500;
+}
+
+@utility balance {
+  text-wrap: balance;
+}
+
+/* film grain, used on the projector only */
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* thin scrollbars for the control panel */
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ink-600) transparent;
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes pulse-ember {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+@keyframes sweep {
+  from {
+    transform: translateX(-120%) skewX(-20deg);
+  }
+  to {
+    transform: translateX(260%) skewX(-20deg);
+  }
+}
+.animate-spin-slow {
+  animation: spin-slow 160s linear infinite;
+}
+.animate-pulse-ember {
+  animation: pulse-ember 1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
